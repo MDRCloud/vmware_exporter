@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <!-- Update UpgradeCode for major versions. Keep same for minor updates to allow upgrade. -->
+  <Product Id="*" Name="VMware Exporter" Language="1033" Version="1.0.0.0" Manufacturer="MDRCloud" UpgradeCode="68615A75-7634-406F-8515-CA2256461973">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <!-- Embed the cab file into the MSI -->
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ProductFeature" Title="VMware Exporter" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="VMware Exporter" />
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="ProductComponent" Guid="F9CA1916-563C-4C98-8422-921473F507F6">
+        <!-- The Source path should point to where PyInstaller outputs the file -->
+        <File Id="VMwareExporterEXE" Source="dist\vmware_exporter.exe" KeyPath="yes" />
+        
+        <!-- Service Installation -->
+        <ServiceInstall 
+          Id="ServiceInstaller" 
+          Type="ownProcess" 
+          Name="VMwareExporter" 
+          DisplayName="VMware Exporter" 
+          Description="Prometheus VMWare Exporter Service" 
+          Start="auto" 
+          Account="LocalSystem" 
+          ErrorControl="normal" />
+          
+        <!-- Service Control: Start on install, stop/remove on uninstall -->
+        <ServiceControl 
+          Id="StartService" 
+          Start="install" 
+          Stop="both" 
+          Remove="uninstall" 
+          Name="VMwareExporter" 
+          Wait="yes" />
+      </Component>
+      
+      <!-- Optional: Config file -->
+      <!-- <Component Id="ConfigFile" Guid="SOME-GUID">
+          <File Source="config.yml" />
+      </Component> -->
+    </ComponentGroup>
+  </Fragment>
+</Wix>

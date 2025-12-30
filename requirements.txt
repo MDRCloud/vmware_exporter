@@ -4,3 +4,5 @@ pyvmomi>=6.5
 twisted>=14.0.2
 pyyaml>=5.1
 service-identity
+# Windows Service Support
+pywin32
